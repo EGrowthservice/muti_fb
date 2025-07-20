@@ -5,6 +5,7 @@ const postQueue = new Bull('post-queue', {
     redis: { host: 'localhost', port: 6379 }
 });
 
+
 export class QueueService {
     static async addPostSyncJob(fanpageId: string, accessToken: string) {
         await postQueue.add({
