@@ -2,9 +2,8 @@ import Bull from 'bull';
 import { FacebookService } from './facebook.service';
 
 const postQueue = new Bull('post-queue', {
-    redis: { host: 'localhost', port: 6379 }
+    redis: process.env.REDIS_URL || 'redis://localhost:6379'
 });
-
 
 export class QueueService {
     static async addPostSyncJob(fanpageId: string, accessToken: string) {
