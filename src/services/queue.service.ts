@@ -37,7 +37,6 @@ export class QueueService {
     static async processMessageProcessingJob() {
         messageQueue.process(async (job) => {
             const { fanpageId, senderId, message } = job.data;
-            // Ví dụ: Tự động trả lời tin nhắn
             const replyMessage = `Received your message: ${message}`;
             const fanpage = await Fanpage.findOne({ fanpageId });
             if (fanpage) {
