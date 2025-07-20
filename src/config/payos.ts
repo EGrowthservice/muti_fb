@@ -1,7 +1,3 @@
-import dotenv from 'dotenv';
-
-dotenv.config();
-
 export const payosConfig = {
     clientId: process.env.PAYOS_CLIENT_ID as string,
     apiKey: process.env.PAYOS_API_KEY as string,

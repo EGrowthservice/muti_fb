@@ -15,6 +15,7 @@ import { QueueService } from './services/queue.service';
 import { errorMiddleware } from './middleware/error.middleware';
 
 dotenv.config();
+console.log('JWT_SECRET loaded:', process.env.JWT_SECRET);
 
 const app = express();
 const server = http.createServer(app);

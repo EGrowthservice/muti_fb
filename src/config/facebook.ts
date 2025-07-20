@@ -1,7 +1,3 @@
-import dotenv from 'dotenv';
-
-dotenv.config();
-
 export const facebookConfig = {
     appId: process.env.FB_APP_ID as string,
     appSecret: process.env.FB_APP_SECRET as string,
