@@ -35,11 +35,11 @@ app.use('/api/comment', commentRoutes);
 app.use('/api/message', messageRoutes);
 app.use('/api/payment', paymentRoutes);
 
-// Error handling middleware
 app.use(errorMiddleware);
 
 setupSocket(io);
 QueueService.processPostSyncJob();
+QueueService.processMessageProcessingJob();
 
 const PORT = process.env.PORT || 5000;
 

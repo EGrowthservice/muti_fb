@@ -1,7 +1,12 @@
 import Bull from 'bull';
 import { FacebookService } from './facebook.service';
+import Fanpage from '../models/fanpage.model';
 
 const postQueue = new Bull('post-queue', {
+    redis: process.env.REDIS_URL || 'redis://localhost:6379'
+});
+
+const messageQueue = new Bull('message-queue', {
     redis: process.env.REDIS_URL || 'redis://localhost:6379'
 });
 
@@ -17,8 +22,28 @@ export class QueueService {
         postQueue.process(async (job) => {
             const { fanpageId, accessToken } = job.data;
             const posts = await FacebookService.getPagePosts(fanpageId, accessToken);
-            // Lưu posts vào database (cần thêm logic lưu vào Post model)
             console.log(`Processed posts for fanpage ${fanpageId}:`, posts);
+        });
+    }
+
+    static async addMessageProcessingJob(fanpageId: string, senderId: string, message: string) {
+        await messageQueue.add({
+            fanpageId,
+            senderId,
+            message
+        });
+    }
+
+    static async processMessageProcessingJob() {
+        messageQueue.process(async (job) => {
+            const { fanpageId, senderId, message } = job.data;
+            // Ví dụ: Tự động trả lời tin nhắn
+            const replyMessage = `Received your message: ${message}`;
+            const fanpage = await Fanpage.findOne({ fanpageId });
+            if (fanpage) {
+                await FacebookService.replyMessage(senderId, replyMessage, fanpage.accessToken);
+                console.log(`Processed message for fanpage ${fanpageId} from ${senderId}: ${message}`);
+            }
         });
     }
 }
