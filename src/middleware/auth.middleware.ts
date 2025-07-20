@@ -3,25 +3,20 @@ import { verifyToken } from '../utils/jwt.util';
 import { AppError } from '../utils/error.util';
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-    let token: string | undefined;
-
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-        token = authHeader.split(" ")[1];
-    } else if (req.query.token && typeof req.query.token === "string") {
-        token = req.query.token;
+    let token = req.headers.authorization;
+    if (token?.startsWith('Bearer ')) {
+        token = token.split(' ')[1];
     }
-
+    console.log('Token:', token);
     if (!token) {
-        res.status(401).json({ error: "Thiếu hoặc sai định dạng token (yêu cầu Bearer token)" });
-        return;
+        throw new AppError('No token provided', 401);
     }
 
     try {
         const decoded = verifyToken(token) as { userId: string };
         req.user = decoded;
         next();
-    } catch {
+    } catch (error) {
         throw new AppError('Invalid token', 401);
     }
 };
